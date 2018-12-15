@@ -5,19 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.smart</groupId>
-  <artifactId>smart-spring-cloud-public-client</artifactId>
+  <artifactId>smart-spring-cloud-seriver-power2</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>war</packaging>
 
-  <name>smart-spring-cloud-public-client Maven Webapp</name>
+  <name>smart-spring-cloud-seriver-power2 Maven Webapp</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
-
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.0.4.RELEASE</version>
-  </parent>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,6 +19,11 @@
     <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
 
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.0.4.RELEASE</version>
+  </parent>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -40,7 +39,6 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
     </dependency>
-
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
@@ -61,7 +59,7 @@
   </dependencyManagement>
 
   <build>
-    <finalName>smart-spring-cloud-public-client</finalName>
+    <finalName>smart-spring-cloud-seriver-power</finalName>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <plugin>

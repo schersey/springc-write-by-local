@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class PowerConfig {
 
-//    @Bean
-//    public ConfigurableServletWebServerFactory webServerFactory(){
-//        TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
-//        factory.setPort(8888);
-//        return factory;
-//    }
+    @Bean
+    public ConfigurableServletWebServerFactory webServerFactory(){
+        TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
+        factory.setPort(8889);
+        return factory;
+    }
 }

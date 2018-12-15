@@ -1,6 +1,5 @@
 package com.smart.web;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -17,16 +16,15 @@ import java.util.Map;
  */
 @Controller
 public class PowerContoller {
-
     static final Logger log = LoggerFactory.getLogger(PowerContoller.class);
     @ResponseBody
     @RequestMapping("/index.do")
     public List<Map<String, String>> index(){
-        log.info("1000~~~~~~~~");
+        log.info("1001");
         List<Map<String, String>> list = new ArrayList<>();
         Map<String, String > map = new HashMap<>();
-        map.put("keyTest", "测试的值～");
-        map.put("port", "1000");
+        map.put("keyTest2", "测试2的值～");
+        map.put("port", "1001");
         list.add(map);
         return list;
     }

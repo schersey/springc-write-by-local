@@ -1,5 +1,7 @@
 package com.smart.web;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Controller
 public class IndexClientController {
-
+    static final Logger log = LoggerFactory.getLogger(IndexClientController.class);
     @Autowired
     RestTemplate restTemplate;
 
@@ -23,7 +25,8 @@ public class IndexClientController {
     @RequestMapping("indexClient.do")
     @ResponseBody
     public String indexClient() {
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:8888/index.do", String.class);
+        log.info("request");
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://microserver-1000-client/index.do", String.class);
         return responseEntity.getBody();
     }
 }
