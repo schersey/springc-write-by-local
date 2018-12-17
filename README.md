@@ -13,5 +13,25 @@
 3.通过Eureka平台查看服务运行情况；
 4.通过springcloud-Ribbon中的@LoadBalanced注解实现负载。
 
+三、加入Springboot actuator 12-17
+springboot actuator模块主要用于系统监控，当应用程序整合了Actuator后，它就会自动提供多个服务端点
+1、加在了power1、power2上。
+2、在client中加入服务查询事项：（加载client端）
+访问：http://localhost:2000/router
+控制台：
+MICROSERVER-1000-CLIENT---bogon:microserver-1000-client:1000---UP
+MICROSERVER-2000-CLIENT---bogon:microserver-2000-client:2000---UP
+
+四、加入springcloud Ribbon
+在client中写请求
+在power1&2中写具体实现，请求后：
+{"id":1,"name":"yan-power1","age":30,"message":"/person/1"}
+{"id":1,"name":"yan-power2","age":30,"message":"/person/1"}
+来回变换
+
+
+
+
+
 
 
