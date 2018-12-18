@@ -13,3 +13,7 @@ eureka:
       prefer-ip-address: true
       lease-expiration-duration-in-seconds: 30
       lease-renewal-interval-in-seconds: 10
+management:
+  endpoint:
+    health:
+      show-details: always #健康情况-展示全部详情，否则只展示status信息

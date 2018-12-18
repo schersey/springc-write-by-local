@@ -124,6 +124,13 @@
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.25" />
           <element id="library" level="project" name="Maven: com.netflix.servo:servo-core:0.12.21" />
           <element id="library" level="project" name="Maven: com.netflix.netflix-commons:netflix-commons-util:0.3.0" />
+          <element id="library" level="project" name="Maven: org.springframework.cloud:spring-cloud-starter-feign:1.4.3.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.cloud:spring-cloud-starter-openfeign:2.0.1.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.cloud:spring-cloud-openfeign-core:2.0.1.RELEASE" />
+          <element id="library" level="project" name="Maven: io.github.openfeign:feign-core:9.5.1" />
+          <element id="library" level="project" name="Maven: io.github.openfeign:feign-slf4j:9.5.1" />
+          <element id="library" level="project" name="Maven: io.github.openfeign:feign-hystrix:9.5.1" />
+          <element id="library" level="project" name="Maven: io.github.openfeign:feign-java8:9.5.1" />
         </element>
       </element>
       <element id="directory" name="META-INF">
