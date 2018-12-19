@@ -76,6 +76,19 @@
       <artifactId>spring-cloud-starter-feign</artifactId>
       <version>1.4.3.RELEASE</version>
     </dependency>
+    <!-- 加入hystrix的依赖 -->
+    <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-hystrix -->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-hystrix</artifactId>
+      <version>1.4.3.RELEASE</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-hystrix-dashboard -->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>
+      <version>1.4.3.RELEASE</version>
+    </dependency>
 
 
   </dependencies>

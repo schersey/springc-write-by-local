@@ -1,5 +1,7 @@
 package com.smart.web;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.smart.service.IndexClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ public class IndexClientController {
     static final Logger log = LoggerFactory.getLogger(IndexClientController.class);
     @Autowired
     RestTemplate restTemplate;
+    @Autowired
+    IndexClientService indexClientService;
 
     /**
      * 利用restTemplate请求
@@ -26,7 +30,7 @@ public class IndexClientController {
     @ResponseBody
     public String indexClient() {
         log.info("request");
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://microserver-1000-client/index.do", String.class);
-        return responseEntity.getBody();
+//        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://microserver-1000-client/index.do", String.class);
+        return indexClientService.helloIndexClinet();
     }
 }
