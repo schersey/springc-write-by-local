@@ -20,3 +20,13 @@ management:
 fegin:
   hystrix:
     enabled: true  #打开 feign与hystrix开关
+
+zuul:
+  routes:
+    api-a:
+      path: /ribbon/**
+      serviceId: service-ribbon  #如果是/ribbon/**路径下的请求，则跳转到service-ribbon
+    api-b:
+      path: /feign/**
+      serviceId: service-feign  #如果是/feign/**路径下的请求，则跳转到service-feign
+

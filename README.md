@@ -167,6 +167,88 @@ public interface FeignService {
 
 
 
+八、Springcloud Zuul【祖鲁】-- 可以做路由中间件 (12-22)
+Zuul为微服务提供代理、过滤、路由器等功能。可以帮我们实现以下功能：
+身份验证和安全性过滤等；
+观察和监控，跟踪重要数据等；
+动态路由，将请求路由到不同的服集群；
+负载均衡能力；
+静态响应处理能力；
+路由多样化。
+简单来说，就是既具备路由转发功能，又具备过滤器功能，比如将/aaa/**路径请求转发到service-ribbon服务上，将/bbb/***路径请求转发到service-feign服务上，比如过滤，对请求参数的信息进行过滤，不符合的进行过滤拦截等。
+1、pom.xml
+<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-zuul -->
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-starter-zuul</artifactId>
+  <version>1.4.3.RELEASE</version>
+</dependency>
+
+2、application.yml（如果是单独启模块的话，需要在eureka中注册）
+zuul:
+  routes:
+    api-a:
+      path: /ribbon/**
+      serviceId: service-ribbon  #如果是/ribbon/**路径下的请求，则跳转到service-ribbon
+    api-b:
+      path: /feign/**
+      serviceId: service-feign  #如果是/feign/**路径下的请求，则跳转到service-feign
+
+3、过滤器类
+public class AccessFilter extends ZuulFilter {
+
+    private static Logger log = LoggerFactory.getLogger(AccessFilter.class);
+
+    @Override
+    public String filterType() {
+        return "pre";
+    }
+
+    @Override
+    public int filterOrder() {
+        return 0;
+    }
+
+    @Override
+    public boolean shouldFilter() {
+        return false;
+    }
+
+    @Override
+    public Object run() throws ZuulException {
+        RequestContext ctx = RequestContext.getCurrentContext();
+        HttpServletRequest request = ctx.getRequest();
+        log.info("send {} request to{}", request.getMethod(), request.getRequestURL().toString());
+        Object accessToken = request.getParameter("accessToken");
+        if (accessToken == null) {
+            log.warn("accessToken is empty");
+            ctx.setSendZuulResponse(false);
+            ctx.setResponseStatusCode(401);
+            try {
+                ctx.getResponse().getWriter().write("accessToken is empty");
+            } catch (Exception e) {
+            }
+            return null;
+        }
+        log.info("access is ok");
+        return null;
+    }
+}
+
+4、注入Bean
+@Bean
+public AccessFilter accessFilter() {
+    return new AccessFilter();
+}
+
+5、访问：
+例如：http://localhost:2000/ribbon/hello 返回accessToken is empty
+因为过滤器中要求加入accessToken的参数。
+http://localhost:2000/ribbon/hello?accessToken=ribbon 则会访问ribbon服务名下的服务
+http://localhost:2000/ribbon/hello?accessToken=feign 则会访问feign服务下的服务。
+
+通过以上的测试，可以得出Zuul的路由和过滤都起作用了。
+还可以配置zuul和ribbon、zuul和hystrix的整合、还有自定义过滤器等。
 
 
 

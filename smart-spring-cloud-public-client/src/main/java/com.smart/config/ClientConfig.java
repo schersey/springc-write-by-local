@@ -1,6 +1,7 @@
 package com.smart.config;
 
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
+import com.smart.filter.AccessFilter;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
@@ -29,13 +30,18 @@ public class ClientConfig {
         return restTemplate;
     }
 
-//    @Bean
-//    public ServletRegistrationBean getServlet() {
-//        HystrixMetricsStreamServlet streamServlet = new HystrixMetricsStreamServlet();
-//        ServletRegistrationBean registrationBean = new ServletRegistrationBean(streamServlet);
-//        registrationBean.setLoadOnStartup(1);
-//        registrationBean.addUrlMappings("/hystrix.stream");
-//        registrationBean.setName("HystrixMetricsStreamServlet");
-//        return registrationBean;
-//    }
+    @Bean
+    public ServletRegistrationBean getServlet() {
+        HystrixMetricsStreamServlet streamServlet = new HystrixMetricsStreamServlet();
+        ServletRegistrationBean registrationBean = new ServletRegistrationBean(streamServlet);
+        registrationBean.setLoadOnStartup(1);
+        registrationBean.addUrlMappings("/hystrix.stream");
+        registrationBean.setName("HystrixMetricsStreamServlet");
+        return registrationBean;
+    }
+
+    @Bean
+    public AccessFilter accessFilter() {
+        return new AccessFilter();
+    }
 }

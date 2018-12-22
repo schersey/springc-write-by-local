@@ -90,6 +90,12 @@
       <version>1.4.3.RELEASE</version>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-zuul -->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-zuul</artifactId>
+      <version>1.4.3.RELEASE</version>
+    </dependency>
 
   </dependencies>
 
