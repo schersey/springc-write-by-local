@@ -96,6 +96,77 @@ Feign服务客户端中的接口名、返回对象可以任意定义。但对象
 启动 Eureka注册中心、服务提供者、Feign服务客户端，然后 Eureka注册中心挂掉时，Feign服务客户端消费服务是不受影响的。
 
 
+七、断路器--集群保护框架--Hystrix [hɪst'rɪks]海斯特克斯 (12-19~12-22)
+在很多系统架构中都需要考虑横向扩展、单点故障等问题，对于一个庞大的应用集群，部分服务或者机器出现问题不可避免，在出现故障时，如何减少故障、保障集群的高可用，成为一个重要的课题，Springcloud中集群保护框架：Hystrix。
+在微服务架构中，存在着那么多的服务单元，若一个单元出现故障，就很容易因依赖关系而引发故障的蔓延，最终导致整个系统的瘫痪，这样的架构相较传统架构更加不稳定。为了解决这样的问题，产生了断路器等一系列的服务保护机制。
+Spring Cloud Hystrix实现了断路器、线程隔离等一系列服务保护功能。它也是基于Netflix的开源框架Hystrix实现的，该框架的目标在于通过控制那些访问远程系统、服务和第三方库的节点， 从而对延迟和故障提供更强大的容错能力。Hystrix具备服务降级、服务熔断、线程和信号隔离、请求缓存、请求合并以及服务监控等强大功能。
+
+在系统中访问http://localhost:2000/indexClient.do地址，在集群环境中，如果其中的一台发生故障（在eureka心跳期内）导致访问失败：
+Whitelabel Error Page
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+Wed Dec 19 11:06:48 CST 2018
+There was an unexpected error (type=Internal Server Error, status=500).
+I/O error on GET request for "http://microserver-1000-client/person/1": Connection refused (Connection refused); nested exception is java.net.ConnectException: Connection refused (Connection refused)
+
+A、在springcloud中使用hystrix -- client项目中
+1、pom.xml：
+<!-- 加入hystrix的依赖 -->
+<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-hystrix -->
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-starter-hystrix</artifactId>
+  <version>1.4.3.RELEASE</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-hystrix-dashboard -->
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>
+  <version>1.4.3.RELEASE</version>
+</dependency>
+
+2、在springcloud2中要加入一项配置类：（不然会出现找不到hystrix.stream的情况）
+@Bean
+public ServletRegistrationBean getServlet() {
+    HystrixMetricsStreamServlet streamServlet = new HystrixMetricsStreamServlet();
+    ServletRegistrationBean registrationBean = new ServletRegistrationBean(streamServlet);
+    registrationBean.setLoadOnStartup(1);
+    registrationBean.addUrlMappings("/hystrix.stream");
+    registrationBean.setName("HystrixMetricsStreamServlet");
+    return registrationBean;
+}
+
+3、启动类中配置：
+//@EnableHystrix
+@EnableCircuitBreaker //hystrix
+@EnableHystrixDashboard //hystrix控制台
+
+4、访问地址：http://localhost:2000/hystrix.stream
+【如果系统没有被使用的话会出现一直出ping：但是没有数据的情况，这时需要访问项目中的具体业务后才能有具体数据出现。】
+5、hystrix控制台地址：http://localhost:2000/hystrix  输入：http://localhost:2000/hystrix.stream和title进行监控。
+Hystrix主要保护调用服务的一放，如果被调用的服务发生故障，符合一定条件，就开启断路器，对调用的程序进行隔离。（可配置回退方式，这样当被调用服务器发生故障可以触发出回退方法中的内容）
+6、Hystrix与Fegin结合
+fegin:
+  hystrix:
+    enabled: true  #打开 feign与hystrix开关
+
+@FeignClient(value = "MICROSERVER-1000-CLIENT", fallback = FeignService.FallBack.class)
+public interface FeignService {
+    @RequestMapping("/index.do")
+    String testFeign();
+
+    //如果失败 则走fallback方法
+    @Component
+    static class FallBack implements FeignService{
+
+        @Override
+        public String testFeign() {
+            return "error hello";
+        }
+    }
+}
+
+
+
 
 
 

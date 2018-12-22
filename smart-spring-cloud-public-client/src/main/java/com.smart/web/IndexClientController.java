@@ -26,7 +26,7 @@ public class IndexClientController {
      * 利用restTemplate请求
      * @return
      */
-    @RequestMapping("indexClient.do")
+    @RequestMapping("indexClient")
     @ResponseBody
     public String indexClient() {
         log.info("request");

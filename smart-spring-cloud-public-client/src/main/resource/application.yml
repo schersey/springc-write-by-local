@@ -17,3 +17,6 @@ management:
   endpoint:
     health:
       show-details: always #健康情况-展示全部详情，否则只展示status信息
+fegin:
+  hystrix:
+    enabled: true  #打开 feign与hystrix开关
