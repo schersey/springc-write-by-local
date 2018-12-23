@@ -4,6 +4,12 @@ server:
 spring:
   application:
     name: microserver-2000-client
+  #rabbitmq
+  rabbitmq:
+    host: 118.89.237.88
+    port: 5672
+    username: root
+    password: root123
 
 eureka:
   client:
@@ -20,3 +26,13 @@ management:
 fegin:
   hystrix:
     enabled: true  #打开 feign与hystrix开关
+
+zuul:
+  routes:
+    api-a:
+      path: /ribbon/**
+      serviceId: service-ribbon  #如果是/ribbon/**路径下的请求，则跳转到service-ribbon
+    api-b:
+      path: /feign/**
+      serviceId: service-feign  #如果是/feign/**路径下的请求，则跳转到service-feign
+

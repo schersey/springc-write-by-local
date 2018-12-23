@@ -4,6 +4,12 @@ server:
 spring:
   application:
     name: microserver-2000-client
+  #rabbitmq
+  rabbitmq:
+    host: 118.89.237.88
+    port: 5672
+    username: root
+    password: root123
 
 eureka:
   client:

@@ -1,6 +1,7 @@
 package com.smart;
 
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
+import com.smart.service.RabbitMQGetService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -11,6 +12,8 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -27,6 +30,7 @@ import org.springframework.context.annotation.Bean;
 @EnableEurekaClient
 
 @EnableZuulProxy  //zuul
+@EnableBinding(RabbitMQGetService.class)
 public class ApplicationClient {
 
     public static void main(String[] args) {
@@ -34,4 +38,8 @@ public class ApplicationClient {
     }
 
 
+    @StreamListener("myInput")
+    public void receive(byte[] msg) {
+        System.out.println("get msg:" + new String(msg));
+    }
 }
