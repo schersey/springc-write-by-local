@@ -251,4 +251,209 @@ http://localhost:2000/ribbon/hello?accessToken=feign 则会访问feign服务下�
 还可以配置zuul和ribbon、zuul和hystrix的整合、还有自定义过滤器等。
 
 
+九、Springcloud stream[rabbitmq、kafka]   [strim]
+stream主要简化了消息应用的开发，该框架主要包括以下内容：
+Stream框架自己的应用模型；
+绑定抽象层，可以与消息代理中间件进行绑定；
+持久化订阅的支持；
+消息者组的支持；
+topic分区的支持。
+1、消息生产者方：（加在power服务端上）
+a、pom.xml：（rabbitmq和kafka可以来换切换）
+<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-config -->
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-starter-config</artifactId>
+  <version>1.4.3.RELEASE</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-stream-rabbit -->
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+  <version>1.3.4.RELEASE</version>
+</dependency>
+<!--&lt;!&ndash; https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-stream-kafka &ndash;&gt;-->
+<!--<dependency>-->
+  <!--<groupId>org.springframework.cloud</groupId>-->
+  <!--<artifactId>spring-cloud-starter-stream-kafka</artifactId>-->
+  <!--<version>1.3.3.RELEASE</version>-->
+<!--</dependency>-->
+
+b、application.yml
+spring:
+  application:
+    name: microserver-1000-client
+  #rabbitmq
+  rabbitmq:
+    host: ***.***.***.***
+    port: 5672
+    username: root
+    password: root123
+
+c、service
+import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.messaging.SubscribableChannel;
+
+public interface RabbitMQSendService {
+
+    @Output("myInput")
+    SubscribableChannel sendOrder();
+
+}
+
+d、controller
+import com.smart.service.RabbitMQSendService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.Message;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+
+import org.springframework.messaging.support.MessageBuilder;
+
+/**
+ * Created by yanchangxian on 2018/12/23.
+ */
+@RestController
+public class RabbitMQSendController {
+    @Autowired
+    RabbitMQSendService rabbitMQSendService;
+
+    @RequestMapping(value = "/sendRabbitMQ", method = RequestMethod.GET)
+    public String sendRequest(){
+        //创建消息
+        Message msg = MessageBuilder.withPayload("Hello World".getBytes()).build();
+        //发送消息
+        rabbitMQSendService.sendOrder().send(msg);
+        return "send ok";
+    }
+}
+
+e、启动类：
+@SpringBootApplication
+@EnableEurekaClient
+@EnableBinding(RabbitMQSendService.class)
+public class ApplicationPower {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ApplicationPower.class);
+    }
+}
+
+f、启动后访问：http://localhost:1000/sendRabbitMQ  返回：send ok
+2、消息消费者方（加在了client服务上）
+a、pom.xml
+<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-config -->
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-starter-config</artifactId>
+  <version>1.4.3.RELEASE</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-stream-rabbit -->
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+  <version>1.3.4.RELEASE</version>
+</dependency>
+<!--&lt;!&ndash; https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-stream-kafka &ndash;&gt;-->
+<!--<dependency>-->
+<!--<groupId>org.springframework.cloud</groupId>-->
+<!--<artifactId>spring-cloud-starter-stream-kafka</artifactId>-->
+<!--<version>1.3.3.RELEASE</version>-->
+<!--</dependency>-->
+
+b、application.yml
+spring:
+  application:
+    name: microserver-2000-client
+  #rabbitmq
+  rabbitmq:
+    host: ***.***.***.***
+    port: 5672
+    username: root
+    password: root123
+
+c、service
+import org.springframework.cloud.stream.annotation.Input;
+import org.springframework.messaging.SubscribableChannel;
+
+public interface RabbitMQGetService {
+
+    @Input("myInput")
+    SubscribableChannel myInput();
+
+}
+
+d、启动类：
+//@EnableHystrix
+@EnableCircuitBreaker //hystrix
+@EnableHystrixDashboard //hystrix控制台
+@EnableDiscoveryClient
+@EnableFeignClients
+@SpringBootApplication
+@EnableEurekaClient
+
+@EnableZuulProxy  //zuul
+@EnableBinding(RabbitMQGetService.class)
+public class ApplicationClient {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ApplicationClient.class, args);
+    }
+
+
+    @StreamListener("myInput")
+    public void receive(byte[] msg) {
+        System.out.println("get msg:" + new String(msg));
+    }
+}
+
+e、控制台输出：
+get msg:Hello World。
+
+相比较而言，还是喜欢用原生的rabbitmq
+https://note.youdao.com/web/#/file/WEB7badcd44ef6828cc5a40ec5e0a3205ed/note/WEB9ceb097f8959846ba0e3c6dce474ed51/
+
+十、SpringCloud Config
+通过对它们的配置，可以很好的管理集群中的配置文件，在实际应用时，我们会将配置文件存放到外部系统（git、svn中），springcloud config的服务器与客户端将到这些外部系统中读取、使用这些配置。
+配置服务器主要有以下功能：
+提供访问配置的服务接口；
+对属性进行加密和解密；
+可以简单的嵌入springboot中
+配置客户端主要有以下功能：
+绑定配置服务器，使用远程的属性来初始化spring容器；
+对属性进行加密和解密；
+属性改变时，可以对他们进行重新加载；
+提供了与配置相关的几个管理端点等
+Spring Cloud Config是Spring Cloud团队创建的一个全新项目，用来为分布式系统中的基础设施和微服务应用提供集中化的外部配置支持，它分为服务端与客户端两个部分。其中服务端也称为分布式配置中心，它是一个独立的微服务应用，用来连接配置仓库并为客户端提供获取配置信息、加密／解密信息等访问接口；而客户端则是微服务架构中的各个微服务应用或基础设施，它们通过指定的配置中心来管理应用资源与业务相关的配置内容，并在启动的时候从配置中心获取和加载配置信息。Spring Cloud Config实现了对服务端和客户端中环境变量和属性配置的抽象映射，所以它除了适用于Spring构建的应用程序之外，也可以在任何其他语言运行的应用程序中使用。由于Spring Cloud Config实现的配置中心默认采用Git来存储配置信息，所以使用Spring Cloud Config构建的配置服务器，天然就支持对微服务应用配置信息的版本管理，并且可以通过Git客户端工具来方便地管理和访问配置内容。
+https://blog.csdn.net/smartdt/article/details/79061906
+https://blog.csdn.net/smartdt/article/details/79070943
+
+十一、SpringCloud BUS 
+在微服务架构的系统中，我们通常会使用轻量级的消息代理来构建一个共用的消息主题让系统中所有微服务实例都连接上来，由于该主题中产生的消息会被所有实例监听和消费，所以我们称它为消息总线。
+我们经常需要使用消息代理的场景：
+将消息路由到一个或多个目的地。
+消息转化为其他的表现方式。
+执行消息的聚集、消息的分解，并将结果发送到它们的目的地，然后重新组合响应返回给消息用户。
+调用Web服务来检索数据。
+响应事件或错误。
+使用发布－订阅模式来提供内容或基千主题的消息路由。
+目前已经有非常多的开源产品可以供大家使用， 比如：
+ActiveMQ
+Kafka
+RabbitMQ
+RocketMQ
+等.....
+https://blog.csdn.net/smartdt/article/details/79073765
+
+十二、SpringCloud Sleuth框架 [sluθ] 
+随着业务的发展，系统规模也会变得越来越大，各微服务间的调用关系也变得越来越错综复杂。通常一个由客户端发起的请求在后端系统中会经过多个不同的微服务调用来协同产生最后的请求结果，在复杂的微服务架构系统中，几乎每一个前端请求都会形成一条复杂的分布式服务调用链路，在每条链路中任何一个依赖服务出现延迟过高或错误的时候都有可能引起请求最后的失败。这时候，对于每个请求，全链路调用的跟踪就变得越来越重要，通过实现对请求调用的跟踪可以帮助我们快速发现错误根源以及监控分析每条请求链路上的性能瓶颈等。
+针对上面所述的分布式服务跟踪问题，Spring Cloud Sleuth提供了 一套完整的解决方案。
+
+目前有许多分布式跟踪系统，例如：zipkin、HTrace等，这些系统可以帮助我们收集一些由服务实时产生的数据，通过这些数据可以分析出分布式系统的健康状态，服务调用过程等。
+
+1、整合Zipkin
+https://blog.csdn.net/smartdt/article/details/79077110
+springcloud2中各种报错。。。
 

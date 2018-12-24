@@ -45,9 +45,31 @@
         <processorPath useClasspath="true" />
         <module name="smart-spring-cloud-public-client" />
       </profile>
+      <profile default="false" name="Annotation profile for config-server" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="config-server" />
+      </profile>
+      <profile default="false" name="Annotation profile for config-client" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+      </profile>
+      <profile default="false" name="Annotation profile for sleuth-zipkin" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
+      <module name="config-client" target="1.7" />
+      <module name="config-server" target="1.7" />
       <module name="eureka-server" target="1.5" />
+      <module name="sleuth-zipkin" target="1.8" />
       <module name="smart-eureka-server" target="1.7" />
       <module name="smart-spring-cloud-public-client" target="1.7" />
       <module name="smart-spring-cloud-seriver-power" target="1.7" />
